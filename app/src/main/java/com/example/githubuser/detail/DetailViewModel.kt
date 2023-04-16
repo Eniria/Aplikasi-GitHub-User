@@ -14,7 +14,8 @@ import kotlinx.coroutines.launch
 
 class DetailViewModel: ViewModel() {
     val resultDetailUser = MutableLiveData<Result>()
-
+    val resultFollowersUser = MutableLiveData<Result>()
+    val resultFollowingUser = MutableLiveData<Result>()
     fun getDetailUser(username: String){
         viewModelScope.launch {
             flow{
@@ -33,6 +34,50 @@ class DetailViewModel: ViewModel() {
                 resultDetailUser.value = Result.Error(it)
             }.collect{
                 resultDetailUser.value =  Result.Success(it)
+            }
+        }
+    }
+
+    fun getFollowers(username: String){
+        viewModelScope.launch {
+            flow{
+                val response = ApiClient
+                    .githubService
+                    .getFollowersUserGithub(username)
+
+                emit(response)
+            }.onStart {//dijalankan ketika mulai
+                resultFollowersUser.value= Result.Loading(true)
+            }.onCompletion {//dijalankan ketika selesai
+                resultFollowersUser.value= Result.Loading(false)
+            }.catch { //dijalankan ketika error
+                Log.e("Error", it.message.toString())
+                it.printStackTrace()
+                resultFollowersUser.value = Result.Error(it)
+            }.collect{
+                resultFollowersUser.value =  Result.Success(it)
+            }
+        }
+    }
+
+    fun getFollowing(username: String){
+        viewModelScope.launch {
+            flow{
+                val response = ApiClient
+                    .githubService
+                    .getFollowingUserGithub(username)
+
+                emit(response)
+            }.onStart {//dijalankan ketika mulai
+                resultFollowingUser.value= Result.Loading(true)
+            }.onCompletion {//dijalankan ketika selesai
+                resultFollowingUser.value= Result.Loading(false)
+            }.catch { //dijalankan ketika error
+                Log.e("Error", it.message.toString())
+                it.printStackTrace()
+                resultFollowingUser.value = Result.Error(it)
+            }.collect{
+                resultFollowingUser.value =  Result.Success(it)
             }
         }
     }
