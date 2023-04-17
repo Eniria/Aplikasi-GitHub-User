@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.SearchView
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.githubuser.data.model.ResponsesUserGithub
@@ -34,6 +35,15 @@ class MainActivity : AppCompatActivity() {
         binding.recyclerView.layoutManager = LinearLayoutManager(this)
         binding.recyclerView.setHasFixedSize(true)
         binding.recyclerView.adapter = adapter
+
+        binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener{
+            override fun onQueryTextSubmit(pO: String?): Boolean {
+                viewModel.getUser(pO.toString())
+                return true
+            }
+
+            override fun onQueryTextChange(pO: String?): Boolean = false
+        })
 
         viewModel.resultUser.observe(this){
             when(it){

@@ -36,4 +36,32 @@ class MainViewModel : ViewModel() {
                 }
         }
     }
+
+    fun getUser(username: String){
+        viewModelScope.launch {
+            flow{
+                val response = ApiClient
+                    .githubService
+                    .searchUserGithub(
+                        mapOf(
+                            "q" to username,
+                            "per_page" to 10
+
+                        )
+                    )
+
+                emit(response)
+            }.onStart {//dijalankan ketika mulai
+                resultUser.value= com.example.githubuser.utils.Result.Loading(true)
+            }.onCompletion {//dijalankan ketika selesai
+                resultUser.value= com.example.githubuser.utils.Result.Loading(false)
+            }.catch { //dijalankan ketika error
+                Log.e("Error", it.message.toString())
+                it.printStackTrace()
+                resultUser.value = com.example.githubuser.utils.Result.Error(it)
+            }.collect{
+                resultUser.value = com.example.githubuser.utils.Result.Success(it.items)
+            }
+        }
+    }
 }
