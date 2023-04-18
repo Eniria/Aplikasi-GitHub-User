@@ -1,25 +1,33 @@
 package com.example.githubuser.detail
 
+import android.content.res.ColorStateList
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.MenuItem
 import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.annotation.ColorRes
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import coil.load
 import coil.transform.CircleCropTransformation
 import com.example.githubuser.R
+import com.example.githubuser.data.local.DbModule
 import com.example.githubuser.data.model.ResponseDetailUser
+import com.example.githubuser.data.model.ResponsesUserGithub
 import com.example.githubuser.databinding.ActivityDetailBinding
 import com.example.githubuser.detail.follow.FollowsFragment
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 
 class DetailActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityDetailBinding
-    private val viewModel by viewModels<DetailViewModel>()
+    private val viewModel by viewModels<DetailViewModel> {
+        DetailViewModel.Factory(DbModule(this))
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,13 +35,14 @@ class DetailActivity : AppCompatActivity() {
         setContentView(binding.root)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        val username = intent.getStringExtra("username") ?: ""
+        val item = intent.getParcelableExtra<ResponsesUserGithub.Item>("item")
+        val username = item?.login ?: ""
 
-        viewModel.resultDetailUser.observe(this){
-            when(it){
+        viewModel.resultDetailUser.observe(this) {
+            when (it) {
                 is com.example.githubuser.utils.Result.Success<*> -> {
-                    val user =it.data as ResponseDetailUser
-                    binding.image.load(user.avatar_url){
+                    val user = it.data as ResponseDetailUser
+                    binding.image.load(user.avatar_url) {
                         transformations(CircleCropTransformation())
                     }
                     binding.nama.text = user.name
@@ -42,7 +51,7 @@ class DetailActivity : AppCompatActivity() {
                     Toast.makeText(this, it.exception.message.toString(), Toast.LENGTH_SHORT).show()
                 }
                 is com.example.githubuser.utils.Result.Loading -> {
-                    binding.progressBar.isVisible= it.isLoading
+                    binding.progressBar.isVisible = it.isLoading
                 }
             }
         }
@@ -57,15 +66,15 @@ class DetailActivity : AppCompatActivity() {
         val adapter = DetailAdapter(this, fragments)
         binding.viewpager.adapter = adapter
 
-        TabLayoutMediator(binding.tab, binding.viewpager){ tab, posisi ->
+        TabLayoutMediator(binding.tab, binding.viewpager) { tab, posisi ->
             tab.text = titleFragments[posisi]
         }.attach()
-        
+
         binding.tab.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab?) {
-                if (tab?.position == 0){
+                if (tab?.position == 0) {
                     viewModel.getFollowers(username)
-                }else{
+                } else {
                     viewModel.getFollowing(username)
                 }
             }
@@ -81,14 +90,34 @@ class DetailActivity : AppCompatActivity() {
         })
 
         viewModel.getFollowers(username)
+
+        viewModel.resultSuksesFavorite.observe(this) {
+            binding.btnFavorite.changeIcoColor(R.color.red)
+        }
+
+        viewModel.resultDeleteFavorite.observe(this) {
+            binding.btnFavorite.changeIcoColor(R.color.white)
+        }
+
+        binding.btnFavorite.setOnClickListener {
+            viewModel.setFavorite(item)
+
+        }
+
+        viewModel.findFavorite(item?.id ?: 0) {
+            binding.btnFavorite.changeIcoColor(R.color.red)
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when(item.itemId){
+        when (item.itemId) {
             android.R.id.home -> {
                 finish()
             }
         }
         return super.onOptionsItemSelected(item)
     }
+}
+fun FloatingActionButton.changeIcoColor(@ColorRes color:Int){
+    imageTintList = ColorStateList.valueOf(ContextCompat.getColor(this.context,color))
 }

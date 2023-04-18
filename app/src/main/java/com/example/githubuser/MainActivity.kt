@@ -2,6 +2,8 @@ package com.example.githubuser
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -11,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.githubuser.data.model.ResponsesUserGithub
 import com.example.githubuser.databinding.ActivityMainBinding
 import com.example.githubuser.detail.DetailActivity
+import com.example.githubuser.favorite.FavoriteActivity
 
 
 class MainActivity : AppCompatActivity() {
@@ -19,7 +22,7 @@ class MainActivity : AppCompatActivity() {
     private val adapter by lazy {
         UserAdapter{ user ->
             Intent(this, DetailActivity::class.java).apply {
-                putExtra("username", user.login )
+                putExtra("item", user)
                 startActivity(this)
             }
         }
@@ -60,5 +63,21 @@ class MainActivity : AppCompatActivity() {
         }
         viewModel.getUser()
 
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.main_menu, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId){
+            R.id.favorite ->{
+                Intent(this, FavoriteActivity::class.java).apply {
+                    startActivity(this)
+                }
+            }
+        }
+        return super.onOptionsItemSelected(item)
     }
 }

@@ -5,4 +5,11 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="followers">Followers</string>
     <string name="following">Following</string>
+    <string name="imagedescription">imagedescription</string>
+    <string name="name_description">name_description</string>
+    <string name="tab_description">tab_description</string>
+    <string name="viewpager_description">viewpager_description</string>
+    <string name="progressbar_description">progressbar_description</string>
+    <string name="favorite_button_description">favorite_button_description</string>
+    <string name="favorite">Favorite</string>
 </resources>
