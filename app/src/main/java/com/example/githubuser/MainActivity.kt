@@ -7,9 +7,11 @@ import android.view.MenuItem
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.SearchView
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.githubuser.data.local.SettingPreferences
 import com.example.githubuser.data.model.ResponsesUserGithub
 import com.example.githubuser.databinding.ActivityMainBinding
 import com.example.githubuser.detail.DetailActivity
@@ -27,13 +29,23 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
-    private val viewModel by viewModels<MainViewModel>()
+    private val viewModel by viewModels<MainViewModel>{
+        MainViewModel.Factory(SettingPreferences(this))
+    }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        viewModel.getTheme().observe(this){
+            if (it) {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+            }else{
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+            }
+        }
 
         binding.recyclerView.layoutManager = LinearLayoutManager(this)
         binding.recyclerView.setHasFixedSize(true)
@@ -77,6 +89,11 @@ class MainActivity : AppCompatActivity() {
                     startActivity(this)
                 }
             }
+//            R.id.setting -> {
+//                Intent(this, SettingActivity::class.java).apply {
+//                    startActivity(this)
+//                }
+//            }
         }
         return super.onOptionsItemSelected(item)
     }

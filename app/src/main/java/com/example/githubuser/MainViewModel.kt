@@ -1,9 +1,8 @@
 package com.example.githubuser
 
 import android.util.Log
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
+import com.example.githubuser.data.local.SettingPreferences
 import com.example.githubuser.data.remote.ApiClient
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
@@ -11,10 +10,11 @@ import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 
-class MainViewModel : ViewModel() {
+class MainViewModel(private val preferences: SettingPreferences) : ViewModel() {
 
     val resultUser = MutableLiveData<com.example.githubuser.utils.Result>()
 
+    fun getTheme() = preferences.getThemeSetting().asLiveData()
     fun getUser(){
         viewModelScope.launch {
                 flow{
@@ -64,4 +64,11 @@ class MainViewModel : ViewModel() {
             }
         }
     }
+
+    class Factory( private  val preferences: SettingPreferences):
+            ViewModelProvider.NewInstanceFactory(){
+
+                override fun <T : ViewModel> create(modeClass: Class<T>): T =
+                    MainViewModel(preferences) as T
+            }
 }

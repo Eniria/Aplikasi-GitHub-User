@@ -12,4 +12,5 @@
     <string name="progressbar_description">progressbar_description</string>
     <string name="favorite_button_description">favorite_button_description</string>
     <string name="favorite">Favorite</string>
+    <string name="setting">Setting</string>
 </resources>
