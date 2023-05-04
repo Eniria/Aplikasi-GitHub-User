@@ -33,7 +33,6 @@ class MainActivity : AppCompatActivity() {
         MainViewModel.Factory(SettingPreferences(this))
     }
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)

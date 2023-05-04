@@ -1,12 +1,12 @@
 package com.example.githubuser.detail
 
 import android.content.res.ColorStateList
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.MenuItem
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.annotation.ColorRes
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -29,6 +29,8 @@ class DetailActivity : AppCompatActivity() {
         DetailViewModel.Factory(DbModule(this))
     }
 
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityDetailBinding.inflate(layoutInflater)
@@ -42,10 +44,16 @@ class DetailActivity : AppCompatActivity() {
             when (it) {
                 is com.example.githubuser.utils.Result.Success<*> -> {
                     val user = it.data as ResponseDetailUser
+
+                    // pemanggilan username
+                    binding.tvUsername.text = user.login
                     binding.image.load(user.avatar_url) {
                         transformations(CircleCropTransformation())
                     }
                     binding.nama.text = user.name
+
+                    //pemanggilan jumlah followers dan following
+                    binding.tvFollowersCount.text = "${user.followers} Followers · ${user.following} Following"
                 }
                 is com.example.githubuser.utils.Result.Error -> {
                     Toast.makeText(this, it.exception.message.toString(), Toast.LENGTH_SHORT).show()
@@ -74,6 +82,7 @@ class DetailActivity : AppCompatActivity() {
             override fun onTabSelected(tab: TabLayout.Tab?) {
                 if (tab?.position == 0) {
                     viewModel.getFollowers(username)
+
                 } else {
                     viewModel.getFollowing(username)
                 }
@@ -86,10 +95,7 @@ class DetailActivity : AppCompatActivity() {
             override fun onTabReselected(tab: TabLayout.Tab?) {
 
             }
-
         })
-
-        viewModel.getFollowers(username)
 
         viewModel.resultSuksesFavorite.observe(this) {
             binding.btnFavorite.changeIcoColor(R.color.red)

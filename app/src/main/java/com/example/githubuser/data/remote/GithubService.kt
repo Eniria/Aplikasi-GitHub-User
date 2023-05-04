@@ -44,4 +44,10 @@ interface GithubService {
         @QueryMap params: Map<String, Any>,
         @Header("Authorization") authorization: String = BuildConfig.TOKEN
     ):ResponsesUserGithub
+
+//    // fungsi-fungsi lainnya
+//    @GET("users/{username}")
+//    fun getDetailUser(
+//        @Path("username") username: String
+//    ): Call<ResponseDetailUser>
 }
