@@ -16,6 +16,7 @@ import com.example.githubuser.data.model.ResponsesUserGithub
 import com.example.githubuser.databinding.ActivityMainBinding
 import com.example.githubuser.detail.DetailActivity
 import com.example.githubuser.favorite.FavoriteActivity
+import com.example.githubuser.setting.SettingActivity
 
 
 class MainActivity : AppCompatActivity() {
@@ -29,6 +30,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+    //setting
     private val viewModel by viewModels<MainViewModel>{
         MainViewModel.Factory(SettingPreferences(this))
     }
@@ -38,6 +40,7 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        // pemanggilan setting
         viewModel.getTheme().observe(this){
             if (it) {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
@@ -83,16 +86,20 @@ class MainActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId){
+
+            //melakukan pemanggilan fovorite kedalam main activity
             R.id.favorite ->{
                 Intent(this, FavoriteActivity::class.java).apply {
                     startActivity(this)
                 }
             }
-//            R.id.setting -> {
-//                Intent(this, SettingActivity::class.java).apply {
-//                    startActivity(this)
-//                }
-//            }
+
+            // melakukan pemanggilan setting
+            R.id.setting -> {
+                Intent(this, SettingActivity::class.java).apply {
+                    startActivity(this)
+                }
+            }
         }
         return super.onOptionsItemSelected(item)
     }

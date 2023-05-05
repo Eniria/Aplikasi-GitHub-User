@@ -7,9 +7,9 @@ import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
+private val Context.prefDataStore by preferencesDataStore("settings")
 class SettingPreferences(context: Context) {
 
-    private val Context.prefDataStore by preferencesDataStore("settings")
     private val settingsDataStore = context.prefDataStore
     private val themeKEY = booleanPreferencesKey("theme_setting")
 

@@ -18,9 +18,7 @@ class SettingViewModel(private val pref: SettingPreferences) : ViewModel() {
     }
 
     class Factory(private val pref: SettingPreferences) : ViewModelProvider.NewInstanceFactory() {
-        override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            return SettingViewModel(pref) as T
-        }
+        override fun <T : ViewModel> create(modelClass: Class<T>): T = SettingViewModel(pref) as T
     }
 
 }
